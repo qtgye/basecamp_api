@@ -1,0 +1,42 @@
+#recent-entries {
+
+	
+	.recent-projects {}
+
+
+	.recent-project-entries {
+		padding-left: 15px;
+
+		.row {
+			margin-bottom: 0;
+		}
+
+		.entry-item {
+
+			& .item-delete,
+			& .item-deleting {
+				display: none;
+				padding: 0 10px;
+			}
+
+			&:hover {
+				.item-delete {
+					display: inline-block;
+				}
+			}
+
+			&[data-deleting] {
+				.item-deleting {
+					display: inline-block;
+				}
+				&:hover {
+					.item-delete {
+						display: none;
+					}
+				}
+			}
+		}
+	}
+
+
+}

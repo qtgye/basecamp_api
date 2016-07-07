@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Options | Basecamp API</title>
+
+	<link rel="stylesheet" href="vendor/Materialize/dist/css/materialize.min.css">
+	  <link rel="stylesheet" href="css/main.css">
+
+</head>
+<body>
+	
+	<div class="container">
+		<div class="card">
+			<div class="card-content">
+
+				<h3>Preferences</h3>
+
+				<form class="row" action="" method="post" id="options-form">
+
+					<div class="col s12 red-text config-alert hide">
+						Please provide all necessary fields.
+					</div>
+		
+					<div class="input-field col s6">
+			          <input type="text" name="username" id="username" class="validate">
+			          <label for="username">Username</label>
+			        </div>
+
+			        <div class="input-field col s6">
+			          <input type="password" name="password" id="password" class="validate">
+			          <label for="password">Password</label>
+			        </div>
+
+			        <div class="col s12 teal-text hide" id="options-saved">
+			        	Successuly saved options.	        	
+			        	<div class="clearfix"><br></div>
+			        </div>
+
+			        <div class="col s12">
+			        	<button class="btn" type="submit">Save</button>
+			        </div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+
+	
+
+
+	<script src="vendor/jquery/dist/jquery.min.js"></script>
+	<script src="vendor/Materialize/dist/js/materialize.min.js"></script>
+	<script src="js/options.js"></script>
+
+</body>
+</html>

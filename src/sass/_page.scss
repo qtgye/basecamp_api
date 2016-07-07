@@ -1,0 +1,15 @@
+.page {
+	display: none;
+
+	&[aria-active-page] {
+		display: block;
+	}
+
+	&#new_time,
+	&#recent-entries,
+	&#options-link,
+	&#new-entry-saved,
+	&#auth-retry {
+		width: 350px;
+	}
+}

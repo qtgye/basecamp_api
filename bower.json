@@ -1,0 +1,21 @@
+{
+  "name": "chrome_ext",
+  "authors": [
+    "Jayson Buquia <jayson.buquia@codeandtheory.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "Materialize": "materialize#^0.97.6"
+  }
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Basecamp  API</title>
+
+  <link rel="stylesheet" href="vendor/Materialize/dist/css/materialize.min.css">
+  <link rel="stylesheet" href="css/main.css">
+
+
+</head>
+<body>
+
+  <div class="main row">
+    <div class="col s12">
+      
+      <!-- Homepage -->
+      <div class="page" id="home">
+        <p><strong class="teal-text">Checking Basecamp User...</strong></p>
+      </div>
+
+      <!-- Task List -->
+      <div class="page" id="task_list">
+        <div class="row">      
+          <p>Welcome, <span id="user_name"></span></p>
+          <hr>
+          <p><strong class="grey-text">Select Task:</strong></p>
+        </div>
+
+        <div class="task-links">
+          <div class="row">
+            <a class="btn" href="fetch_projects">New Time Entry</a>
+          </div>
+          <div class="row">
+            <a href="recent-entries">Recent Time Entries</a>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- New Time Entry page -->
+      <div class="page" id="new_time">
+        <br><br>
+        <form action="" method="post" id="new_time_form">
+          <!-- person id -->
+          <input type="number" name="person-id" class="hide" hidden>
+
+          <!-- Project -->
+          <div class="input-field col s12">       
+            <select id="project" name="project">
+            </select> 
+            <label for="project">Project</label>      
+          </div>
+          <div class="col s12 grey-text recent_projects_list">
+            <em>Recent Projects:</em>
+          </div>
+
+          <!-- Date -->
+          <div class="input-field col s8">
+            <input id="date" type="date" class="datepicker" name="date">
+            <label for="date">Date</label>
+          </div>
+
+          <!-- Hours -->
+          <div class="input-field col s4">
+            <input id="hours" type="number" class="validate" name="hours" step="0.01" >
+            <label for="hours">Hours</label>
+          </div>
+          <div class="col s12 grey-text helper_dates"></div>
+
+          <!-- Description -->
+          <div class="input-field col s12">
+            <input id="description" type="text" class="validate" name="description">
+            <label for="description">Description</label>
+          </div>
+
+          <div class="col s12 clearfix">
+            <br>
+              <strong>
+                <em class="red-text" id="error-msg"></em>
+                <em class="green-text" id="info-msg"></em>
+              </strong>
+            <br>
+            <br>
+            <button type="submit" class="btn">Create</button>
+          </div>     
+        </form>      
+        <div class="clearfix"><br></div>
+        <div class="col s12">
+          <a href="recent-entries">
+            <em class="right grey-text lighten-2">You have logged <span id="hours-logged">0.00</span> h for today.</em>
+          </a>
+        </div>
+      </div>
+
+
+      <div class="page" id="recent-entries">
+        <div class="col s12">
+          <p><strong class="teal-text">Your recent time entries from the last 5 days:</strong></p>
+          <ul class="recent-list">
+          </ul>
+          <!-- End recent-list -->
+          <div class="right">
+            <a href="task_list">Go to Task List</a>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="page" id="new-entry-saved">
+        <br><br>
+        <div class="row teal-text">
+          Successfuly created new entry.
+        </div>
+        <div class="row">
+          <a href="new_time">Create another entry.</a> <br>
+          <a href="recent-entries">Go to recent entries list.</a> <br>
+          <a href="task_list">Go to task list.</a>
+        </div>
+      </div>
+
+
+      <div class="page" id="options-link">
+        <div class="col s12">
+          
+          <div class="red-text">
+            <p>
+              Authentication failed.
+            </p>
+            <p>
+              Please provide necessary credentials in the <a href="javascript:;" id="options-link-text">options page</a>.
+            </p>
+            <p>
+              You may also <a href="javascript:;" id="auth-retry-link">retry authentication.</a>
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      
+      <div class="page" id="auth-retry">
+        <br>
+        Retrying auth...
+      </div>
+
+
+
+      <div class="page" id="fetch_projects">
+        Fetching projects...
+      </div>
+
+
+      <div class="page" id="no_project">
+        No Project.
+      </div>
+
+
+      <!-- Basecamp login redirect -->
+      <div class="page" id="login">
+        <p>You are not currently logged in to Basecamp</p>
+        <a class="btn" href="https://gobeyondstudios.basecamphq.com/login" target="_blank">Login</a>
+      </div>
+
+
+    </div>
+  </div>
+
+  
+
+
+  <script src="vendor/jquery/dist/jquery.min.js"></script>
+  <script src="vendor/Materialize/dist/js/materialize.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/modules/page.js"></script>
+
+</body>
+</html>
