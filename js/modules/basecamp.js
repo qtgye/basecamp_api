@@ -362,9 +362,6 @@ Basecamp.processDate = function (date) {
 
 	processedDate += month < 10 ? '0'+month : month;
 	processedDate += date < 10 ? '0'+date : date;
-
-	console.log('processedDate',processedDate);
-
 	return processedDate;
 }
 

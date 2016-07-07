@@ -272,11 +272,13 @@ function onFetchRecentEntriesSuccess(_entries) {
 		todayFullYear = dateToday.getFullYear(),
 		todayMonth = dateToday.getMonth() + 1,
 		todayDate = dateToday.getDate(),
-		todayCardId = 'card_'+[todayFullYear,(todayMonth < 10 ? '0'+todayMonth : todayMonth),todayDate].join('-'),
+		todayCardId = 'card_'+[todayFullYear,(todayMonth < 10 ? '0'+todayMonth : todayMonth),(todayDate < 10 ? '0'+todayDate : todayDate)].join('-'),
 		$todayCard = $('#'+todayCardId);
 	if ( $todayCard.length ) {
 		var hoursToday = Number($todayCard.attr('data-hours'));
 		$('#hours-logged').text(hoursToday);
+		// Put remaining time as default
+		App.getBackgroundApp().Basecamp.today.loggedHours = hoursToday;
 	}
 }
 
@@ -357,9 +359,14 @@ function bindNewtimePage() {
 			},100);
 		}
 
+		// Default to remaining hours to log
+		var hoursRemaining = 8-App.getBackgroundApp().Basecamp.today.loggedHours;
+		$('[name="hours"]').val(hoursRemaining)
+			.next('label').addClass('active');
+
 		// resets
 		$form.find('#error-msg, #info-msg').text('');
-		$form.find('[name="hours"], [name="description"]').val('');
+		$form.find('[name="description"]').val('');
 
 	});
 
@@ -481,7 +488,7 @@ function sendFormData(xml,project) {
  * ----------------------------------------------------------------------
  */
 
-App.getBackroundApp = BackgroundApp;
+App.getBackgroundApp = BackgroundApp;
 
 
 
