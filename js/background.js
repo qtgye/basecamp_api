@@ -79,7 +79,6 @@ _methods.fetchRecentEntries = function () {
 
 
 _methods.deleteTimeEntry = function (id) {
-	console.log('deleting',id);
 	App.Basecamp.deleteTimeEntry(id,
 		// SUCCESS
 		function (xhr) {			
@@ -87,6 +86,11 @@ _methods.deleteTimeEntry = function (id) {
 		},
 		// FAIL
 		_dummy);
+};
+
+
+_methods.checkPreviousEntries = function () {
+	App.Basecamp.checkPreviousEntries();
 };
 
 
@@ -108,6 +112,17 @@ App.onAuthSuccess = function (data) {
 };
 
 
+App.updateUserConfig = updateUserConfig;
+
+
+
+
+/**
+ * ----------------------------------------------------------------------
+ * REGISTER BACKGROUND METHODS
+ * ----------------------------------------------------------------------
+ */
+
 
 
 
@@ -123,5 +138,15 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 		sendResponse(data);
 	}
 });
+
+
+
+/**
+ * ----------------------------------------------------------------------
+ * Init
+ * ----------------------------------------------------------------------
+ */
+
+
 
 })(chrome);

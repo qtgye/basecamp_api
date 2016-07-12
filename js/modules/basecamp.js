@@ -254,33 +254,25 @@ Basecamp.updateUserConfig = function (callback) {
 };
 
 
-Basecamp.fetchUser = function () {
-	console.log('fetching user Basecamp.fetchUser...');
+Basecamp.fetchUser = function (onSuccess,onFail) {
 	// Get user data
 	Basecamp.request({
 		url : 'me.xml',
 		onSuccess : function (data,xhr) {
 			if ( data.person ) {
 				Basecamp.currentUser = data.person;		
-				Basecamp.isFetchingUser = false;
+				Basecamp.isFetchingUser = false;	
 
-				// Today		
-				var today = Date.now();
-				Basecamp.today = {
-					basecampFormat : Basecamp.processDate(today),
-					timestamp : new Date(today)
-				};
-
-				App.onAuthSuccess(Basecamp.currentUser,xhr);
+				( onSuccess ? onSuccess : App.onAuthSuccess )(Basecamp.currentUser,xhr);
 				return;				
 			}	
 			console.log('error on success');
 			Basecamp.isFetchingUser = false;
-			App.onAuthFail(xhr);
+			( onFail ? onFail : App.onAuthFail )(xhr);
 		},
 		onError : function (xhr) {
 			Basecamp.isFetchingUser = false;
-			App.onAuthFail(xhr);
+			( onFail ? onFail : App.onAuthFail )(xhr);
 		}
 	});
 };
@@ -300,7 +292,6 @@ Basecamp.fetchRecentEntries = function ( onSuccess,onError ) {
 		url : 'time_entries/report.xml?subject_id='+Basecamp.currentUser.id+'&from='+from+'&to='+Basecamp.today.basecampFormat,
 		onSuccess : function (data) {
 			if ( data && data['time-entries'] ) {
-				console.log('success fetchRecentEntries',data['time-entries']['time-entry']);
 				onSuccess(data['time-entries']['time-entry']);
 			}
 			onError(data);
@@ -312,6 +303,58 @@ Basecamp.fetchRecentEntries = function ( onSuccess,onError ) {
 		}
 	});
 };
+
+
+/**
+ * Checks recent entries from the last 5 days, informing the user for missing logs
+ * @return void
+ */
+Basecamp.checkPreviousEntries = function () {
+	var dayToday = Basecamp.today.timestamp.getDay(),
+		previousWorkDay = {
+			timestamp : null,
+			standardFormat : null
+		},
+		previousWorkDayEntry,
+		loggedHours = null;
+
+	Basecamp.fetchRecentEntries(function (recentEntries) {
+		// if monday
+		if ( dayToday == 1 ) {
+			previousWorkDay.timestamp = new Date(Date.now() - (1000*60*60*24*2));
+		} else {
+			previousWorkDay.timestamp = new Date(Date.now() - (1000*60*60*24));
+		}
+		previousWorkDay.standardFormat = Basecamp.processDate(previousWorkDay.timestamp,true);
+
+		// get available entries for previous work day
+		previousWorkDayEntry = recentEntries.filter(function (_entry) {
+			return _entry.date == previousWorkDay.standardFormat;
+		});
+
+		if ( previousWorkDayEntry && previousWorkDayEntry.length > 0 ) {
+			// Compute
+			loggedHours = previousWorkDayEntry.reduce(function (a,b) {
+				return a + b.hours;
+			},0);
+		}
+
+		// Check if missing or incomplete log
+		// 0 hours logged is valid (VL/SL/Holiday)
+		console.log('loggedHours',loggedHours);
+		if ( loggedHours !== 0 && loggedHours < 8 ) {
+			// Missing log or incomplete hours
+			chrome.tabs.create({ 
+				url: "incomplete_log.html?date={{date}}&hours={{hours}}"
+						.replace('{{date}}',previousWorkDay.standardFormat)
+						.replace('{{hours}}',loggedHours)
+			});
+		}
+	});
+
+	
+
+}
 
 
 Basecamp.fetchProjects = function (onSuccess,onError) {
@@ -343,30 +386,29 @@ Basecamp.deleteTimeEntry = function (id,onSuccess,onFail) {
 			onFail(xhr);
 		}
 	});
-}
+};
+
 
 
 /**
  * Converts date to Basecamp acceptable date format
- * @param  {[type]} date [description]
+ * @param  {Date} date 
+ * @param {bool} withDash If dashes will be added in between
  * @return {[type]} [description]
  */
-Basecamp.processDate = function (date) {
+Basecamp.processDate = function (date,withDash) {
 	var _d = new Date(date),
 		processedDate = '';
 
-	processedDate += _d.getFullYear();
+	processedDate += _d.getFullYear() + ( withDash ? '-' : '' );
 
 	var month = _d.getMonth()+1,
 		date = _d.getDate();
 
-	processedDate += month < 10 ? '0'+month : month;
+	processedDate += (month < 10 ? '0'+month : month) + ( withDash ? '-' : '' );
 	processedDate += date < 10 ? '0'+date : date;
 	return processedDate;
 }
-
-
-
 
 
 
@@ -375,6 +417,18 @@ Basecamp.processDate = function (date) {
  * INIT
  * -------------------------------------------------------
  */
+
+// Today		
+var today = Date.now();
+Basecamp.today = {
+	basecampFormat : Basecamp.processDate(today),
+	timestamp : new Date(today)
+};
+
+
+Basecamp.updateUserConfig(function () {
+	Basecamp.fetchUser(Basecamp.checkPreviousEntries);
+});
 
 
 })(window.App);

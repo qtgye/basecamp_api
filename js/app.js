@@ -102,6 +102,7 @@ function BackgroundApp() {
 function backgroundConnect() {
 	request(['backgroundConnect',App], function(msg) {
 		console.info(msg);
+		request(['checkPreviousEntries']);
 		request(['updateUserConfig']);
 	});
 }
@@ -273,13 +274,14 @@ function onFetchRecentEntriesSuccess(_entries) {
 		todayMonth = dateToday.getMonth() + 1,
 		todayDate = dateToday.getDate(),
 		todayCardId = 'card_'+[todayFullYear,(todayMonth < 10 ? '0'+todayMonth : todayMonth),(todayDate < 10 ? '0'+todayDate : todayDate)].join('-'),
-		$todayCard = $('#'+todayCardId);
+		$todayCard = $('#'+todayCardId),
+		hoursToday = 0;
 	if ( $todayCard.length ) {
-		var hoursToday = Number($todayCard.attr('data-hours'));
-		$('#hours-logged').text(hoursToday);
-		// Put remaining time as default
-		App.getBackgroundApp().Basecamp.today.loggedHours = hoursToday;
+		var hoursToday = Number($todayCard.attr('data-hours'));				
 	}
+	// Put remaining time as default
+	$('#hours-logged').text(hoursToday);
+	App.getBackgroundApp().Basecamp.today.loggedHours = hoursToday;
 }
 
 
