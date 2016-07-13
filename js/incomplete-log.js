@@ -11,7 +11,7 @@ var urlParams = {};
 
 
 // process url params
-location.search.match(/([^\?&=]+=[^\?&=]+)/g).forEach(function (_item) {
+location.search.match(/([^\?&]+)/g).forEach(function (_item) {
 	var _item = _item.split('=');
 	urlParams[_item[0]] = _item[1];
 });
@@ -37,11 +37,16 @@ container.innerHTML = html.replace(/{{[A-Za-z0-9-_]+}}/g,function (match) {
 // Replace template data
 var ModelViews = {
 	elements : document.querySelectorAll('[data-model]'),
-	renderModel : function (modelName,data) {
+	renderModel : function (modelName,data,unescape) {
 		[].filter.call(this.elements,function (_element) {
 			return _element.getAttribute('data-model') == modelName;
 		}).forEach(function (_element) {
-			_element.textContent = data;
+			if ( !unescape ) {
+				_element.innerHTML = data;
+			} else {
+				_element.textContent = data;
+			}
+			
 		});
 	}
 };
@@ -49,7 +54,7 @@ var ModelViews = {
 
 // Render data
 ModelViews.renderModel('date',urlParams.date);
-ModelViews.renderModel('hours',urlParams.hours);
+ModelViews.renderModel('hours',decodeURIComponent(urlParams.hours));
 
 // Show container
 container.className = container.className.replace(/\s?hide\s?/,'');

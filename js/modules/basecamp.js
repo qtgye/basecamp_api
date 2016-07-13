@@ -208,7 +208,8 @@ Basecamp.request = function (_opts) {
 					return;
 				} catch (err) {
 					console.log('there was an error',err);
-					_options.onError(xhr);
+					_options.onError ? _options.onError(xhr) : (function () {})();
+					
 				}
 			} else if ( 
 					xhr.status == 201 && xhr.statusText == 'Created'
@@ -343,14 +344,17 @@ Basecamp.checkPreviousEntries = function () {
 		// 0 hours logged is valid (VL/SL/Holiday)
 		console.log('loggedHours',loggedHours);		
 		if ( loggedHours !== 0 && loggedHours < 8 ) {
+			loggedHours = loggedHours === null
+						? 'There was no logged hours'
+						: encodeURIComponent('Logged hours was only <span class="teal-text">'+loggedHours+'</span>');
 			// Missing log or incomplete hours
 			chrome.tabs.create({ 
 				url: "incomplete_log.html?date={{date}}&hours={{hours}}"
 						.replace('{{date}}',previousWorkDay.standardFormat)
-						.replace('{{hours}}', (loggedHours===null?'none':loggedHours) )
+						.replace('{{hours}}',loggedHours)
 			});
 		}
-	});
+	},function () {});
 
 	
 
