@@ -341,13 +341,13 @@ Basecamp.checkPreviousEntries = function () {
 
 		// Check if missing or incomplete log
 		// 0 hours logged is valid (VL/SL/Holiday)
-		console.log('loggedHours',loggedHours);
+		console.log('loggedHours',loggedHours);		
 		if ( loggedHours !== 0 && loggedHours < 8 ) {
 			// Missing log or incomplete hours
 			chrome.tabs.create({ 
 				url: "incomplete_log.html?date={{date}}&hours={{hours}}"
 						.replace('{{date}}',previousWorkDay.standardFormat)
-						.replace('{{hours}}',loggedHours)
+						.replace('{{hours}}', (loggedHours===null?'none':loggedHours) )
 			});
 		}
 	});
