@@ -12,6 +12,7 @@
   "permissions" : [
     "background",
     "storage",
+    "notifications",
   	"https://*/",
     "https://gobeyondstudios.basecamphq.com/"
   ],

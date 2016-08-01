@@ -28,6 +28,37 @@ var _config = {
 
 
 
+
+
+/**
+ * -------------------------------------------------------
+ * PRIVATE FUNCTIONS
+ * -------------------------------------------------------
+ */
+
+/**
+ * Gets a day name based on the 1-based index
+ * @param  {number} index 1-based index
+ * @return {string}       the name of the day
+ */
+var getDayName = function (index) {
+	return [
+		null,
+		'Monday',
+		'Tuesday',
+		'Wednesday',
+		'Thursday',
+		'Friday',
+		'Saturday',
+		'Sunday'
+	][index];
+}
+
+
+
+
+
+
 /**
  * -------------------------------------------------------
  * FUNCTION CLASSES
@@ -322,8 +353,13 @@ Basecamp.checkPreviousEntries = function () {
 	Basecamp.fetchRecentEntries(function (recentEntries) {
 		// if monday
 		if ( dayToday == 1 ) {
+			previousWorkDay.timestamp = new Date(Date.now() - (1000*60*60*24*3));
+		} 
+		// if sunday
+		else if ( dayToday == 7 ) {
 			previousWorkDay.timestamp = new Date(Date.now() - (1000*60*60*24*2));
-		} else {
+		}
+		else {
 			previousWorkDay.timestamp = new Date(Date.now() - (1000*60*60*24));
 		}
 		previousWorkDay.standardFormat = Basecamp.processDate(previousWorkDay.timestamp,true);
@@ -342,18 +378,18 @@ Basecamp.checkPreviousEntries = function () {
 
 		// Check if missing or incomplete log
 		// 0 hours logged is valid (VL/SL/Holiday)
-		console.log('loggedHours',loggedHours);		
 		if ( loggedHours !== 0 && loggedHours < 8 ) {
 			loggedHours = loggedHours === null
 						? 'There was no logged hours'
-						: encodeURIComponent('Logged hours was only <span class="teal-text">'+loggedHours+'</span>');
-			// Missing log or incomplete hours
-			chrome.tabs.create({ 
-				url: "incomplete_log.html?date={{date}}&hours={{hours}}"
-						.replace('{{date}}',previousWorkDay.standardFormat)
-						.replace('{{hours}}',loggedHours)
-			});
+						: 'Logged hours was only '+loggedHours+'.';
+			chrome.notifications.create(null,{
+				  type : 'basic',
+				  iconUrl :'images/alert.jpg',
+				  title : 'Incomplete log for ' + getDayName(dayToday) + '.',
+				  message : loggedHours
+				});
 		}
+				
 	},function () {});
 
 	
