@@ -347,8 +347,7 @@ Basecamp.checkPreviousEntries = function () {
 			timestamp : null,
 			standardFormat : null
 		},
-		previousWorkDayEntry,
-		loggedHours = null;
+		previousWorkDayEntry;
 
 	Basecamp.fetchRecentEntries(function (recentEntries) {
 		// if monday
@@ -371,30 +370,45 @@ Basecamp.checkPreviousEntries = function () {
 
 		if ( previousWorkDayEntry && previousWorkDayEntry.length > 0 ) {
 			// Compute
-			loggedHours = previousWorkDayEntry.reduce(function (a,b) {
+			previousWorkDay.loggedHours = previousWorkDayEntry.reduce(function (a,b) {
 				return a + b.hours;
 			},0);
 		}
 
 		// Check if missing or incomplete log
 		// 0 hours logged is valid (VL/SL/Holiday)
-		if ( loggedHours !== 0 && loggedHours < 8 ) {
-			loggedHours = loggedHours === null
-						? 'There was no logged hours'
-						: 'Logged hours was only '+loggedHours+'.';
-			chrome.notifications.create(null,{
-				  type : 'basic',
-				  iconUrl :'images/alert.jpg',
-				  title : 'Incomplete log for ' + getDayName(dayToday) + '.',
-				  message : loggedHours
-				});
+		if ( previousWorkDay.loggedHours !== 0 && previousWorkDay.loggedHours < 8 ) {
+			Basecamp.showIncompleLogNotification(previousWorkDay);
 		}
-				
-	},function () {});
 
+	},function () {});	
+
+};
+
+
+Basecamp.showIncompleLogNotification = function (previousWorkDay) {
 	
+	var dayToday = Basecamp.today.timestamp.getDay(),
+		loggedHours = previousWorkDay.loggedHours === null
+					? 'There was no logged hours'
+					: 'Logged hours on ' + previousWorkDay.standardFormat + ' was only '+previousWorkDay.loggedHours+'.';
 
-}
+	chrome.notifications.create(null,{
+		type : 'basic',
+		iconUrl :'images/alert.jpg',
+		title : 'Incomplete log for ' + getDayName(dayToday) + '.',
+		message : loggedHours,
+		buttons : [
+			{ title : 'Go to Basecamp', iconUrl : 'images/link.png' }
+		]
+	}, function (id) {
+		chrome.notifications.onButtonClicked.addListener(function () {
+			chrome.notifications.clear(id);
+			chrome.tabs.create({ url : 'https://gobeyondstudios.basecamphq.com/projects/10222875-training/time_entries' });
+		});
+	});	
+
+};
 
 
 Basecamp.fetchProjects = function (onSuccess,onError) {
